@@ -23,7 +23,6 @@
         "@ng-bootstrap/ng-bootstrap": "^16.0.0",
         "@tabler/core": "^1.0.0-beta20",
         "jquery": "^3.7.1",
-        "ngc-esbuild": "^0.0.83",
         "pug": "^3.0.2",
         "rxjs": "~7.8.1",
         "socket.io-client": "^4.7.2",

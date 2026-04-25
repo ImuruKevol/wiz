@@ -35,7 +35,7 @@ class Model:
             fs.write.json("build/package.json", packageJson)
             Util.execute(f"cd {build_dir} && npm install --force")
         else:
-            Util.execute(f"cd {build_dir} && npm install ngc-esbuild pug jquery socket.io-client --save")
+            Util.execute(f"cd {build_dir} && npm install pug jquery socket.io-client --save")
 
     def __call__(self):
         self.build()
@@ -387,6 +387,7 @@ class Model:
     def _angular(self):
         fs = self.fs()
         esbuildpath = fs.abspath('build')
-        Util.execute(f"cd {esbuildpath} && node wizbuild")
+        command = "NG_CLI_ANALYTICS=false NG_BUILD_TYPE_CHECK=false node node_modules/@angular/cli/bin/ng.js build --configuration development --no-progress"
+        Util.execute(f"cd {esbuildpath} && {command}")
 
 Model = Model()

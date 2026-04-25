@@ -16,7 +16,6 @@ export class Component implements OnInit {
         "@angular/platform-browser-dynamic",
         "@angular/router",
         "jquery",
-        "ngc-esbuild",
         "pug",
         "rxjs",
         "socket.io-client",
