@@ -338,7 +338,13 @@ class Model:
                 # if view.ts
                 importString = "import { Component } from '@angular/core';\n"
                 componentName = Namespace.componentName(app_id)
-                componentOpts = "{\n    selector: '" + Namespace.selector(app_id) + "',\n    templateUrl: './view.html',\n    styleUrls: ['./view.scss']\n}"
+                componentOpts = [
+                    "selector: '" + Namespace.selector(app_id) + "'",
+                    "templateUrl: './view.html'",
+                ]
+                if fs.exists(target + ".scss"):
+                    componentOpts.append("styleUrls: ['./view.scss']")
+                componentOpts = "{\n    " + ",\n    ".join(componentOpts) + "\n}"
 
                 code = f"import Wiz from 'src/wiz';\nlet wiz = new Wiz('{baseuri}').app('{app_id}');\n" + code
                 code = code.replace('export class Component', f"@Component({componentOpts})\n" + f'export class {componentName}Component')
