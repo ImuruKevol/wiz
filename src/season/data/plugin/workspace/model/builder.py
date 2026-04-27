@@ -32,6 +32,8 @@ class Model:
 
         if fs.isfile("src/angular/package.json"):
             packageJson = fs.read.json("src/angular/package.json")
+            if isinstance(packageJson, dict) is False:
+                raise Exception("Invalid src/angular/package.json")
             fs.write.json("build/package.json", packageJson)
             Util.execute(f"cd {build_dir} && npm install --force")
         else:
@@ -143,6 +145,16 @@ class Model:
 
         if fs.exists("src/angular/tailwind.config.js"):
             fs.write('build/tailwind.config.js', fs.read("src/angular/tailwind.config.js"))
+
+        if fs.exists("src/angular/tailwind.css"):
+            fs.copy("src/angular/tailwind.css", "build/tailwind.css")
+        else:
+            fs.write('build/tailwind.css', Code.TAILWINDCSS)
+
+        if fs.exists("src/angular/.postcssrc.json"):
+            fs.copy("src/angular/.postcssrc.json", "build/.postcssrc.json")
+        else:
+            fs.write('build/.postcssrc.json', Code.POSTCSS)
 
         if fs.exists('build/src/environments') == False:
             fs.makedirs('build/src/environments')
@@ -385,10 +397,14 @@ class Model:
         fs.write("build/angular.json", json.dumps(angularJson, indent=4))
         fs.write("src/angular/angular.json", json.dumps(angularJson, indent=4))
 
-        # build tailwindcss
-        if fs.exists("./build/node_modules/.bin/tailwindcss"):
-            build_base_path = fs.abspath("build")
-            Util.execute(f"cd {build_base_path} && node_modules/.bin/tailwindcss -o tailwind.min.css --minify", False)
+        fs.delete("build/tailwind.min.css")
+        if fs.exists("build/node_modules/.bin/tailwindcss") == False:
+            raise Exception("Tailwind CLI is not installed in build/node_modules. Run npm install in the build workspace.")
+
+        build_base_path = fs.abspath("build")
+        result = Util.execute(f"cd {build_base_path} && node_modules/.bin/tailwindcss -i tailwind.css -o tailwind.min.css -c tailwind.config.js --minify", False)
+        if result != 0:
+            raise Exception("Tailwind minify build failed.")
 
     def _angular(self):
         fs = self.fs()

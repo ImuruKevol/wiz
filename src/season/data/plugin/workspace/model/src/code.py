@@ -75,10 +75,20 @@ if (process.argv.length > 2) {
 
     STYLES = '@import "styles/styles"'
 
+    POSTCSS = """{
+    \"plugins\": {
+        \"@tailwindcss/postcss\": {}
+    }
+}"""
+
+    TAILWINDCSS = """@import \"tailwindcss\";
+@config \"./tailwind.config.js\";
+"""
+
     TAILWIND = """/** @type {import('tailwindcss').Config} */
 module.exports = {
     content: [
-        "./src/app/**/*.{html,ts}",
+        "./src/**/*.{html,ts}",
     ],
     theme: {
         extend: {},
