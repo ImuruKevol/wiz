@@ -4,24 +4,26 @@ import subprocess
 class Model:
     @staticmethod
     def _is_warning_stderr(message):
+        normalized_message = message.lower()
         warning_tokens = [
-            "npm WARN",
-            "- Installing packages (npm)",
-            "▲ [WARNING]",
-            "Node.js version ",
-            "Odd numbered Node.js versions",
-            "The 'vendorChunk' option is not used by this builder and will be ignored.",
+            "npm warn",
+            "npm notice",
+            "- installing packages (npm)",
+            "▲ [warning]",
+            "node.js version ",
+            "odd numbered node.js versions",
+            "the 'vendorchunk' option is not used by this builder and will be ignored.",
         ]
         error_tokens = [
-            "✘ [ERROR]",
+            "✘ [error]",
             "fatal error:",
-            "Application bundle generation failed.",
+            "application bundle generation failed.",
         ]
 
-        if any(token in message for token in error_tokens):
+        if any(token in normalized_message for token in error_tokens):
             return False
 
-        return any(token in message for token in warning_tokens)
+        return any(token in normalized_message for token in warning_tokens)
 
     @staticmethod
     def execute(cmd, log=True):

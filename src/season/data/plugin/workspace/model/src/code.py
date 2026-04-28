@@ -73,7 +73,7 @@ if (process.argv.length > 2) {
     }
 }"""
 
-    STYLES = '@import "styles/styles"'
+    STYLES = '@use "styles/styles";'
 
     POSTCSS = """{
     \"plugins\": {
