@@ -298,7 +298,8 @@ class Model:
         # prefix and imports
         prefix = [dict(name=x['name'], path=x['path']) for x in apps]        
         imports = []
-        declarations = [x['name'] for x in apps]
+        declarations = []
+        component_declarations = [app['name'] for app in apps]
 
         for app in apps:
             app_id = app['id']
@@ -324,7 +325,12 @@ class Model:
         
         prefix = "\n".join(["import { " + x['name'] + " } from '" + x['path'] + "';" for x in prefix])
         imports = ",\n".join(["        " + x for x in imports])
-        declarations = "AppComponent,\n" + ",\n".join(["        " + x for x in declarations])
+        directive_declarations = declarations
+        declarations = "AppComponent"
+        if len(component_declarations) > 0:
+            declarations = declarations + ",\n" + ",\n".join(["        " + x for x in component_declarations])
+        if len(directive_declarations) > 0:
+            declarations = declarations + ",\n" + ",\n".join(["        " + x for x in directive_declarations])
 
         # build pug
         targets = self._search("build/src", result=[], extension=".pug")
@@ -348,11 +354,15 @@ class Model:
                 app_id = target.split("/")[-2]
 
                 # if view.ts
-                importString = "import { Component } from '@angular/core';\n"
+                importString = "\n".join([
+                    "import { Component } from '@angular/core';"
+                ]) + "\n"
                 componentName = Namespace.componentName(app_id)
+
                 componentOpts = [
                     "selector: '" + Namespace.selector(app_id) + "'",
                     "templateUrl: './view.html'",
+                    "standalone: false",
                 ]
                 if fs.exists(target + ".scss"):
                     componentOpts.append("styleUrls: ['./view.scss']")
